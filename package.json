@@ -11,7 +11,7 @@
     "build.ui": "npm run build.app && npm run build.ui",
     "build.service": "./node_modules/.bin/webpack webpack.config.js --watch",
     "build.app": "npm run copy.appviews && babel src/app -w -d build/app",
-    "start.demo": "node -r dotenv/config ./build/demo"
+    "start.demo": "node ./build/demo"
   },
   "keywords": [],
   "author": "DerrickW",
