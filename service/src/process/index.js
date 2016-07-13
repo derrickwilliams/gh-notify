@@ -5,6 +5,7 @@ import fs from 'fs';
 //get data here
 let readFile = Promise.promisifyAll(fs).readFileAsync;
 let dataPromise = readFile('./service/build/process/mock-data.json');
+let oneDay = 24 * 60 * 60 * 1000;
 
 let output = [];
 
@@ -19,7 +20,10 @@ function mapPRs(repo) {
   return _.map(repo.pullRequests, (PR) => {
 
     PR.repo = repo.name;
+    PR.owner = PR.owner.login;
     PR.link = PR.url;
+    PR.timeOpen = (new Date() - new Date(PR.created)) / oneDay;
+    PR.timeSinceLastModified = (new Date() - new Date(PR.updated)) / oneDay;
 
     PR.assignees = _.map(PR.assignees, (assignee) => assignee.login);
     PR.level = getLevel(PR);
@@ -33,9 +37,12 @@ function mapPRs(repo) {
 }
 
 function getLevel(PR) {
-  if(PR.assignees.length === 0) {
+  let noComments = false;
+  if(PR.assignees.length === 0 || PR.timeOpen > 3) {
     return 10; //red: no assignees or stale
   }
-  let yellow = 5; //yellow going stale (outstanding > 2 days or no comments from assignees yet && older than 16 hours)
+  if(PR.timeOpen > 2 || (PR.timeOpen > 1 && noComments)) {
+    return 5; //yellow going stale (outstanding > 2 days or no comments from assignees yet && older than 16 hours)
+  }
   return 0; //green
 }
