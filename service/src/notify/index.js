@@ -59,25 +59,6 @@ export default function notifyHipchat(pullRequests) {
     }
   }
 
-/*hipchatter.notify('CBAX Scrum', 
-    {
-        message: '<b>Outstanding Pullrequest</b>: <a href="https://github.com/cbdr/cbax-apply-platform/pull/271">Add redirect to CB #271</a><br/><b>Assignees:</b> derrickwilliams',
-        color: 'green',
-        token: '7b6FlCfiFjgVaNpgM3YLOBNeJ3FxIgR2Tq1BC1Jp'
-    }, function(err){
-        if (err == null) console.log('Successfully notified the room.');
-});*/
 return Promise.resolve();
-  /*return Promise.resolve(request({
-    url: 'https://api.hipchat.com/v2/room/CBAX Scrum/notifcation',
-    headers: {
-      'content-type':'application/json'
-    },
-    body: {
-      from: 'Admiral Pugdalf',
-
-    }
-
-  }))*/
 
 }
