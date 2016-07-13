@@ -3,15 +3,15 @@ import Promise from 'bluebird';
 import fs from 'fs';
 import getRepositories from '../retreive';
 
-let dataPromise = getRepositories({ repo: 'cbax-' })
-
 let oneDay = 24 * 60 * 60 * 1000;
 
-dataPromise
-  .then((repos) => _.filter(repos, (r) => r.pullRequests.length > 0 ))
-  .then((repos) => _.map(repos, mapPRs))
-  .then((PRs) => _.flatten(PRs))
-  .tap(console.log);
+export default function processPRs() {
+  return getRepositories({ repo: 'cbax-' })
+    .then((repos) => _.filter(repos, (r) => r.pullRequests.length > 0 ))
+    .then((repos) => _.map(repos, mapPRs))
+    .then((PRs) => _.flatten(PRs))
+    //.tap(console.log);
+}
 
 function mapPRs(repo) {
   return _.map(repo.pullRequests, (PR) => {
