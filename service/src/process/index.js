@@ -1,16 +1,13 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import fs from 'fs';
+import getRepositories from '../retreive';
 
-//get data here
-let readFile = Promise.promisifyAll(fs).readFileAsync;
-let dataPromise = readFile('./service/build/process/mock-data.json');
+let dataPromise = getRepositories({ repo: 'cbax-' })
+
 let oneDay = 24 * 60 * 60 * 1000;
 
-let output = [];
-
 dataPromise
-  .then((fileContent) => JSON.parse(fileContent).repos)
   .then((repos) => _.filter(repos, (r) => r.pullRequests.length > 0 ))
   .then((repos) => _.map(repos, mapPRs))
   .then((PRs) => _.flatten(PRs))
