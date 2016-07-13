@@ -1,7 +1,7 @@
 import express from 'express';
 import { join } from 'path';
 import fs from 'fs';
-import getRepositories from '../build/retreive';
+import getRepositories from '../build/retrieve';
 import notifyHipchat from '../build/notify';
 
 const app = express();
