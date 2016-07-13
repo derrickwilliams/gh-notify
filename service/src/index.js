@@ -1,7 +1,9 @@
 import express from 'express';
 import request from 'request-promise';
 import Promise from 'bluebird';
-import { assign, filter, includes } from 'lodash'
+import { assign, filter, includes } from 'lodash';
+import { join } from 'path';
+import fs from 'fs';
 
 const app = express();
 
@@ -9,6 +11,7 @@ const GITHUB_API_URL = 'https://api.github.com';
 
 app.get('/github/repos', (req, res) => {
   getRepositories(req.query)
+    .tap(repos => fs.writeFileSync(join(__dirname, 'full_response.json'), JSON.stringify(repos, null, 2)))
     .then(repos => res.json({ repos }))
     .catch(err => res.status(500).json({ error: err.toString() }))
 })
@@ -25,20 +28,29 @@ function getRepositories({ repo }) {
   .then(repos => filter(repos, (r) => r.owner.login === 'cbdr'))
   // .map(loadRepoIssues)
   .map(loadPullRequests)
-  .map(r => {
-    return {
-      name: r.name,
-      owner: r.owner.login,
-      issues: r.issues,
-      pullRequests: r.pullRequests
-    };
-  });
+  // .map(r => {
+  //   return {
+  //     name: r.name,
+  //     owner: r.owner.login,
+  //     issues: r.issues,
+  //     pullRequests: r.pullRequests
+  //   };
+  // });
 }
 
 function loadPullRequests(repo) {
   let { pulls_url } = repo;
   return githubRequest(pulls_url)
-    .map(p => ({ id: p.id, number: p.number, title: p.title, url: p.url, assignees: p.assignees }))
+    .map(p => ({
+      id: p.id,
+      owner: p.user,
+      number: p.number,
+      title: p.title,
+      url: p.url,
+      assignees: p.assignees,
+      created: p.created_at,
+      updated: p.updated_at
+    }))
     .then(pulls => assign({}, repo, { ['pullRequests']: pulls }))
     .catch(err => {
       console.error(err)
@@ -49,7 +61,7 @@ function loadPullRequests(repo) {
 function loadRepoIssues(repo) {
   let { issues_url } = repo;
   return githubRequest(issues_url)
-    .map(i => ({ id: i.id, number: i.number, title: i.title, url: i.url, assignees: i.assignees }))
+    // .map(i => ({ id: i.id, number: i.number, title: i.title, url: i.url, assignees: i.assignees }))
     .then(issues => assign({}, repo, { issues }))
     .catch(err => {
       console.error(err)
