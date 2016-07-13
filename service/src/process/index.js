@@ -18,7 +18,7 @@ function mapPRs(repo) {
 
     PR.repo = repo.name;
     PR.owner = PR.owner.login;
-    PR.link = PR.url.replace('api.', '');
+    PR.link = PR.url;
     PR.timeOpen = (new Date() - new Date(PR.created)) / oneDay;
     PR.timeSinceLastModified = (new Date() - new Date(PR.updated)) / oneDay;
 
