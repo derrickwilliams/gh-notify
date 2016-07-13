@@ -11,7 +11,9 @@ const GITHUB_API_URL = 'https://api.github.com';
 
 app.get('/github/repos', (req, res) => {
   getRepositories(req.query)
-    .tap(repos => fs.writeFileSync(join(__dirname, 'full_response.json'), JSON.stringify(repos, null, 2)))
+    .tap(repos => {
+      fs.writeFileSync(join(__dirname, 'partial_response.json'), JSON.stringify(repos, null, 2))
+    })
     .then(repos => res.json({ repos }))
     .catch(err => res.status(500).json({ error: err.toString() }))
 })
@@ -41,6 +43,7 @@ function getRepositories({ repo }) {
 function loadPullRequests(repo) {
   let { pulls_url } = repo;
   return githubRequest(pulls_url)
+    .map(loadPRComments)
     .map(p => ({
       id: p.id,
       owner: p.user,
@@ -49,7 +52,8 @@ function loadPullRequests(repo) {
       url: p.url,
       assignees: p.assignees,
       created: p.created_at,
-      updated: p.updated_at
+      updated: p.updated_at,
+      comments: p.comments
     }))
     .then(pulls => assign({}, repo, { ['pullRequests']: pulls }))
     .catch(err => {
@@ -67,6 +71,13 @@ function loadRepoIssues(repo) {
       console.error(err)
       throw err;
     })
+}
+
+function loadPRComments(pr) {
+  let { comments_url } = pr;
+  debugger
+  return githubRequest(comments_url)
+    .then(comments => assign({}, pr, { comments }))
 }
 
 function removePlaceholder(url, placeholder) {

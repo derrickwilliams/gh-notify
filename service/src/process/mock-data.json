@@ -259,3 +259,35 @@
     }
   ]
 }
+
+
+[
+  -{
+    url: "https://api.github.com/repos/cbdr/cbax-go/issues/comments/201093090",
+    html_url: "https://github.com/cbdr/cbax-go/pull/1#issuecomment-201093090",
+    issue_url: "https://api.github.com/repos/cbdr/cbax-go/issues/1",
+    id: 201093090,
+    user: -{
+      login: "derrickwilliams",
+      id: 470442,
+      avatar_url: "https://avatars.githubusercontent.com/u/470442?v=3",
+      gravatar_id: "",
+      url: "https://api.github.com/users/derrickwilliams",
+      html_url: "https://github.com/derrickwilliams",
+      followers_url: "https://api.github.com/users/derrickwilliams/followers",
+      following_url: "https://api.github.com/users/derrickwilliams/following{/other_user}",
+      gists_url: "https://api.github.com/users/derrickwilliams/gists{/gist_id}",
+      starred_url: "https://api.github.com/users/derrickwilliams/starred{/owner}{/repo}",
+      subscriptions_url: "https://api.github.com/users/derrickwilliams/subscriptions",
+      organizations_url: "https://api.github.com/users/derrickwilliams/orgs",
+      repos_url: "https://api.github.com/users/derrickwilliams/repos",
+      events_url: "https://api.github.com/users/derrickwilliams/events{/privacy}",
+      received_events_url: "https://api.github.com/users/derrickwilliams/received_events",
+      type: "User",
+      site_admin: false
+    },
+    created_at: "2016-03-25T01:16:56Z",
+    updated_at: "2016-03-25T01:16:56Z",
+    body: "This is just a very small layer over the s3 package. Do we gain much from having this? I feel like this could just be a little code that's part of a util package (or something) in the apply-url-service where it's called from now. I'm not saying it's unnecessary but it I don't really think it belongs here."
+  }
+]
