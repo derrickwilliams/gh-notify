@@ -28,14 +28,14 @@ function getRepositories({ repo }) {
   .then(repos => filter(repos, (r) => r.owner.login === 'cbdr'))
   // .map(loadRepoIssues)
   .map(loadPullRequests)
-  // .map(r => {
-  //   return {
-  //     name: r.name,
-  //     owner: r.owner.login,
-  //     issues: r.issues,
-  //     pullRequests: r.pullRequests
-  //   };
-  // });
+  .map(r => {
+    return {
+      name: r.name,
+      owner: r.owner.login,
+      issues: r.issues,
+      pullRequests: r.pullRequests
+    };
+  });
 }
 
 function loadPullRequests(repo) {
@@ -61,7 +61,7 @@ function loadPullRequests(repo) {
 function loadRepoIssues(repo) {
   let { issues_url } = repo;
   return githubRequest(issues_url)
-    // .map(i => ({ id: i.id, number: i.number, title: i.title, url: i.url, assignees: i.assignees }))
+    .map(i => ({ id: i.id, number: i.number, title: i.title, url: i.url, assignees: i.assignees }))
     .then(issues => assign({}, repo, { issues }))
     .catch(err => {
       console.error(err)
@@ -87,8 +87,6 @@ function githubRequest(endpoint, { data = {}, dataField = 'qs' } = {}) {
 }
 
 function prepEndpointUrl(urlIn) {
-  console.log('url in', urlIn);
-  console.log(urlIn, 'includes', GITHUB_API_URL, includes(removePlaceholder(urlIn, 'number'), GITHUB_API_URL))
   urlIn = removePlaceholder(urlIn, 'number');
   return includes(urlIn, GITHUB_API_URL) ?
     urlIn : `${GITHUB_API_URL}/${urlIn}`;
