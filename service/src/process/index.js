@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import fs from 'fs';
-import getRepositories from '../retreive';
+import getRepositories from '../retrieve';
 
 let oneDay = 24 * 60 * 60 * 1000;
 
@@ -25,16 +25,14 @@ function mapPRs(repo) {
     PR.assignees = _.map(PR.assignees, (assignee) => assignee.login);
     PR.level = getLevel(PR);
 
-    _.unset(PR, 'id');
-    _.unset(PR, 'number');
-    _.unset(PR, 'url');
+    PR = prune(PR);
 
     return PR;
   });
 }
 
 function getLevel(PR) {
-  let noComments = false;
+  let noComments = PR.comments.length === 0;
   if(PR.assignees.length === 0 || PR.timeOpen > 3) {
     return 10; //red: no assignees or stale
   }
@@ -42,4 +40,19 @@ function getLevel(PR) {
     return 5; //yellow going stale (outstanding > 2 days or no comments from assignees yet && older than 16 hours)
   }
   return 0; //green
+}
+
+function prune(PR) {
+  let fieldsToRemove = [
+    'id',
+    'number',
+    'url',
+    'comments',
+    'created',
+    'updated',
+    'timeOpen',
+    'timeSinceLastModified'
+  ];
+
+  return _.omit(PR, fieldsToRemove);
 }

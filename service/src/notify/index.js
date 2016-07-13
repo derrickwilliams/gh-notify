@@ -2,55 +2,63 @@ import Hipchatter from 'hipchatter';
 import Promise from 'bluebird';
 import { forEach } from 'lodash';
 
-export default function notifyHipchat(params) {
-  console.log('params:',params);
+export default function notifyHipchat(pullRequests) {
+  console.log('pullRequests:',pullRequests);
 
   let hipchatter = new Hipchatter('X7qQU0XPSjNn86rj6eLcZEX4tQ1rm6hojP7tLFuq');
   let colors = {
-    'normal': 'green',
-    'urgent': 'red'  
+    '0': 'green',
+    '5': 'yellow',
+    '10': 'red'  
   };
+  let levels = {
+    '0': 'new',
+    '5': 'outstanding',
+    '10': 'unassigned or stale'
+  }
+  let groupedPRs = {
+    '0': [],
+    '5': [],
+    '10': []
+  }
+  let messages = {
+    '0': '',
+    '5': '',
+    '10': ''
+  }
 
-  params = params || {
-    pullRequests: [{
+  pullRequests = pullRequests || [{
       link: 'https://github.com/cbdr/cbax-apply-platform/pull/271',
       title: 'Add redirect to CB',
       id: 271,
       assignees: ['derrickwilliams','mmoldavan'],
       level: 'normal'
     }]
+
+  forEach(pullRequests, groupPRs);
+  forEach(messages, sendNotifcation);
+
+  function groupPRs(pr) {
+    groupedPRs[pr.level].push(pr);
+    messages[pr.level] += '<b>' +pr.repo +': <a href="'+ pr.link +'">' + pr.title + '</a></b></br><i>Assignees: '+pr.assignees+'</i><br/>'
   }
 
-  forEach(params.pullRequests, sendNotifcation)
-  function sendNotifcation(request) {
-    hipchatter.notify('CBAX Scrum', 
-        {
-            message: '<b>PR:</b>: <a href="'+ request.link +'">' + request.title + ' ' + request.id + '</a><br/><b>Assignees:</b> '+request.assignees,
-            color: colors[request.level],
-            token: '7b6FlCfiFjgVaNpgM3YLOBNeJ3FxIgR2Tq1BC1Jp'
-        }, function(err){
-            if (err == null) console.log('Successfully notified the room.');
-    });
-  }
-/*hipchatter.notify('CBAX Scrum', 
-    {
-        message: '<b>Outstanding Pullrequest</b>: <a href="https://github.com/cbdr/cbax-apply-platform/pull/271">Add redirect to CB #271</a><br/><b>Assignees:</b> derrickwilliams',
-        color: 'green',
-        token: '7b6FlCfiFjgVaNpgM3YLOBNeJ3FxIgR2Tq1BC1Jp'
-    }, function(err){
-        if (err == null) console.log('Successfully notified the room.');
-});*/
-return Promise.resolve();
-  /*return Promise.resolve(request({
-    url: 'https://api.hipchat.com/v2/room/CBAX Scrum/notifcation',
-    headers: {
-      'content-type':'application/json'
-    },
-    body: {
-      from: 'Admiral Pugdalf',
-
+  function sendNotifcation(message, key) {
+    console.log(key, message);
+    if(groupedPRs[key].length > 0) {
+      message = '<b>There are ' + groupedPRs[key].length + ' ' + levels[key] + ' pull requests.</b><br/><br/>' + message
+      hipchatter.notify('CBAX Scrum', 
+          {
+              message: message,
+              color: colors[key],
+              notify: true,
+              token: '7b6FlCfiFjgVaNpgM3YLOBNeJ3FxIgR2Tq1BC1Jp'
+          }, function(err){
+              if (err == null) console.log('Successfully notified the room.');
+      });
     }
+  }
 
-  }))*/
+return Promise.resolve();
 
 }

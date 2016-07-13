@@ -1,8 +1,8 @@
 var processPRs = require('./build/process');
-import notifyHipchat from './build/notify';
+var notifyHipchat = require('./build/notify');
 
 processPRs.default()
-  .then(notifyHipchat2);
+  .then(notifyHipchat.default);
 
 function notifyHipchat2(prs) {
   console.log(prs);
