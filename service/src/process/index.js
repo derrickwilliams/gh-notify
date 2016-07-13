@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import fs from 'fs';
-import getRepositories from '../retreive';
+import getRepositories from '../retrieve';
 
 let oneDay = 24 * 60 * 60 * 1000;
 
