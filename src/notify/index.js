@@ -9,7 +9,7 @@ export default function notifyHipchat(pullRequests) {
   let colors = {
     '0': 'green',
     '5': 'yellow',
-    '10': 'red'  
+    '10': 'red'
   };
   let levels = {
     '0': 'new',
@@ -39,6 +39,7 @@ export default function notifyHipchat(pullRequests) {
   forEach(messages, sendNotifcation);
 
   function groupPRs(pr) {
+    debugger
     groupedPRs[pr.level].push(pr);
     messages[pr.level] += '<b>' +pr.repo +': <a href="'+ pr.link +'">' + pr.title + '</a></b></br><i>Assignees: '+pr.assignees+'</i><br/>'
   }
@@ -47,7 +48,7 @@ export default function notifyHipchat(pullRequests) {
     console.log(key, message);
     if(groupedPRs[key].length > 0) {
       message = '<b>There are ' + groupedPRs[key].length + ' ' + levels[key] + ' pull requests.</b><br/><br/>' + message
-      hipchatter.notify('CBAX Scrum', 
+      hipchatter.notify('CBAX Scrum',
           {
               message: message,
               color: colors[key],
